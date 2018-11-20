@@ -5,8 +5,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EnumerableStreamFileResult
 {
- class EnumerableFileStreamer<T> : FileResult
-        where T : IStreamWriteable
+    class EnumerableFileStreamer<T> : FileResult
+           where T : IStreamWriteable
     {
         private readonly IEnumerable<T> _enumeration;
 
