@@ -9,9 +9,15 @@ namespace EnumerableStreamFileResult.Pages
 {
     public class IndexModel : PageModel
     {
+        public const int DefaultMaxSize = 100_000;
+
         public void OnGet()
         {
+        }
 
+        public IActionResult OnPostDownload(int recordCount)
+        {
+            return Content($"Will download {recordCount}.");
         }
     }
 }

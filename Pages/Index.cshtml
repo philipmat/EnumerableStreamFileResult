@@ -3,3 +3,18 @@
 @{
     ViewData["Title"] = "Home page";
 }
+
+<h2>Download file from streamed enumeration</h2>
+<div class="row">
+    <div class="col-sm-4">
+
+        <form method="post" asp-page-handler="Download">
+            <div class="form-group">
+                <label for="RecordCount">Number of records in the generated file</label>
+                <input type="text" class="form-control"
+                    name="RecordCount" value="@IndexModel.DefaultMaxSize" />
+            </div>
+            <input type="submit" class="btn btn-primary" value="Download" />
+        </form>
+    </div>
+</div>
