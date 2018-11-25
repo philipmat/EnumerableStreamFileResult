@@ -39,8 +39,9 @@ namespace EnumerableStreamFileResult
                 lastItem = item;
             }
 
-            if (lastItem.Equals(default(T)))
+            if (!lastItem.Equals(default(T)))
             {
+                // writing footer if we enumerated records
                 await lastItem.WriteFooterAsync(body).ConfigureAwait(false);
             }
 
