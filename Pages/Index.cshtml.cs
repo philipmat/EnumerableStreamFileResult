@@ -23,25 +23,31 @@ namespace EnumerableStreamFileResult.Pages
                 .Range(1, recordCount)
                 .Select(i => new LineNumber(i));
 
-            return new EnumerableFileStreamer<LineNumber>(lines, "application/vnd.ms-excel") {
+            return new EnumerableFileStreamer<LineNumber>(lines, new LineNumberToCsvWriter()) {
                 FileDownloadName = $"Lines {recordCount}.csv"
             };
         }
 
-        private class LineNumber : IStreamWriteable
+        private class LineNumber
         {
             public LineNumber(int lineNumber)
                 => Position = lineNumber;
 
             public int Position { get; }
 
-            public async Task WriteAsync(Stream stream)
+        }
+
+        private class LineNumberToCsvWriter : IStreamWritingAdapter<LineNumber>
+        {
+            public string ContentType => "application/vnd.ms-excel";
+
+            public async Task WriteAsync(LineNumber item, Stream stream)
             {
-                byte[] line = Encoding.UTF8.GetBytes($"{Position},Line-{Position:n0}{Environment.NewLine}");
+                byte[] line = Encoding.UTF8.GetBytes($"{item.Position},Line-{item.Position:n0}{Environment.NewLine}");
                 await stream.WriteAsync(line, 0, line.Length);
             }
 
-            public Task WriteFooterAsync(Stream stream) => Task.CompletedTask;
+            public Task WriteFooterAsync(Stream stream, int recordCount) => Task.CompletedTask;
 
             public async Task WriteHeaderAsync(Stream stream)
             {

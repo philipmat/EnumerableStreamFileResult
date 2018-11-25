@@ -6,13 +6,15 @@ using Microsoft.AspNetCore.Mvc;
 namespace EnumerableStreamFileResult
 {
     class EnumerableFileStreamer<T> : FileResult
-           where T : IStreamWriteable
     {
         private readonly IEnumerable<T> _enumeration;
+        private readonly IStreamWritingAdapter<T> _writer;
 
-        public EnumerableFileStreamer(IEnumerable<T> enumeration, string contentType) : base(contentType)
+        public EnumerableFileStreamer(IEnumerable<T> enumeration, IStreamWritingAdapter<T> writer)
+            : base(writer.ContentType)
         {
             _enumeration = enumeration ?? throw new ArgumentNullException(nameof(enumeration));
+            _writer = writer ?? throw new ArgumentNullException(nameof(writer));
         }
 
         public override async Task ExecuteResultAsync(ActionContext context)
@@ -26,24 +28,15 @@ namespace EnumerableStreamFileResult
         private async Task WriteContent(ActionContext context)
         {
             var body = context.HttpContext.Response.Body;
-            bool first = true;
-            T lastItem = default(T);
+            await _writer.WriteHeaderAsync(body).ConfigureAwait(false);
+            int recordCount = 0;
             foreach (var item in _enumeration)
             {
-                if (first)
-                {
-                    await item.WriteHeaderAsync(body).ConfigureAwait(false);
-                    first = false;
-                }
-                await item.WriteAsync(body).ConfigureAwait(false);
-                lastItem = item;
-            }
+                await _writer.WriteAsync(item, body).ConfigureAwait(false);
+                recordCount++;
 
-            if (!lastItem.Equals(default(T)))
-            {
-                // writing footer if we enumerated records
-                await lastItem.WriteFooterAsync(body).ConfigureAwait(false);
             }
+            await _writer.WriteFooterAsync(body, recordCount);
 
             await base.ExecuteResultAsync(context).ConfigureAwait(false);
         }
