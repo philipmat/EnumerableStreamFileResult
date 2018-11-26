@@ -47,10 +47,12 @@ namespace EnumerableStreamFileResult
             var cd = new System.Net.Mime.ContentDisposition
             {
                 FileName = FileDownloadName,
-                Inline = true,
+                Inline = false, // false = attachement
             };
 
-            headers.Add("Content-Disposition", new Microsoft.Extensions.Primitives.StringValues(cd.ToString()));
+            headers.Add(
+                "Content-Disposition",
+                new Microsoft.Extensions.Primitives.StringValues(cd.ToString()));
         }
 
         private void SetContentType(ActionContext context)
