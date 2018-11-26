@@ -22,10 +22,10 @@ namespace EnumerableStreamFileResult
             SetContentType(context);
             SetContentDispositionHeader(context);
 
-            await WriteContent(context).ConfigureAwait(false);
+            await WriteContentAsync(context).ConfigureAwait(false);
         }
 
-        private async Task WriteContent(ActionContext context)
+        private async Task WriteContentAsync(ActionContext context)
         {
             var body = context.HttpContext.Response.Body;
             await _writer.WriteHeaderAsync(body).ConfigureAwait(false);
@@ -34,8 +34,8 @@ namespace EnumerableStreamFileResult
             {
                 await _writer.WriteAsync(item, body).ConfigureAwait(false);
                 recordCount++;
-
             }
+
             await _writer.WriteFooterAsync(body, recordCount);
 
             await base.ExecuteResultAsync(context).ConfigureAwait(false);
