@@ -20,7 +20,7 @@ namespace EnumerableStreamFileResult.Pages
                 .Range(1, recordCount)
                 .Select(i => new LineNumber(i));
 
-            return new EnumerableFileStreamer<LineNumber>(lines, new LineNumberToCsvWriter()) {
+            return new EnumerableFileResult<LineNumber>(lines, new LineNumberToCsvWriter()) {
                 FileDownloadName = $"Lines {recordCount}.csv"
             };
         }

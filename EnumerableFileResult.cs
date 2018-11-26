@@ -5,12 +5,12 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace EnumerableStreamFileResult
 {
-    class EnumerableFileStreamer<T> : FileResult
+    class EnumerableFileResult<T> : FileResult
     {
         private readonly IEnumerable<T> _enumeration;
         private readonly IStreamWritingAdapter<T> _writer;
 
-        public EnumerableFileStreamer(IEnumerable<T> enumeration, IStreamWritingAdapter<T> writer)
+        public EnumerableFileResult(IEnumerable<T> enumeration, IStreamWritingAdapter<T> writer)
             : base(writer.ContentType)
         {
             _enumeration = enumeration ?? throw new ArgumentNullException(nameof(enumeration));
